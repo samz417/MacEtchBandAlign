@@ -405,3 +405,4 @@ plot_button = tk.Button(root, text="Plot", command=plot_selected_materials)
 plot_button.pack(pady=10)
 
 root.mainloop()
+
