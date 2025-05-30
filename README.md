@@ -44,5 +44,5 @@ Install dependencies:
 
 ```bash
 pip install matplotlib pandas numpy
-
-this readme was generated with AI
+```
+This readme was generated with AI
