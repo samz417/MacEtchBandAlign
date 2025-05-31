@@ -15,6 +15,13 @@ It includes a simple GUI, customizable material entry, and dynamic plotting of s
 
 ---
 
+## Screenshots
+
+![Screenshot 1](screenshot_01.png)
+![Screenshot 2](screenshot_02.png)
+
+---
+
 ## 📦 Precompiled Binaries
 
 You can use MacEtch without installing Python by downloading the appropriate file below:
