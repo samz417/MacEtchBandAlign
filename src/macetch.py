@@ -29,21 +29,17 @@ figure_icons = []
 
 
 # Data setup
-matls = ["Si", "Ge", "4H-SiC", "β-Ga₂O₃", "GaN", "GaAs", "InP", "InAs", "GaSb", "GaP", "AlAs", "InSb", "AlSb", "AlN", "InN"]
+data = pd.read_csv("data.csv")
 
-cats = ["Au⁺/Au", "Au³⁺/Au", "Cu⁺/Cu", "Cu²⁺/Cu", "Ag⁺/Ag", "Ir³⁺/Ir", "Ni²⁺/Ni", "IrO₂/Ir", "NiₓSiᵧ", "Pt²⁺/Pt", "Pd²⁺/Pd",
-        "Al³⁺/Al", "Ru²⁺/Ru", "Co²⁺/Co", "Fe²⁺/Fe", "Zn⁺/Zn", "Ti³⁺/Ti", "Cr³⁺/Cr", "WO₄²⁻/WO₂", "Graphene", "SWCNT", "TiN", 
-        "Sn²⁺/Sn", "RuO₄/Ru²⁺", "WO₄²⁻/W₂O₅"]
-cols = pd.Series(["Si", "Ge", "4H-SiC", "β-Ga₂O₃", "GaN", "GaAs", "InP", "InAs", "GaSb", "GaP", "AlAs", "InSb", "AlSb", "AlN", "InN", 
-                  "", "Metal E°", "", "", "Oxidant E°"])
-oxs = ["H₂O₂/H₂O", "MnO₄/Mn²⁺", "Cr₂O₇²⁻/Cr³⁺", "HNO₃/HNO₂", "S₂O₈²⁻/HSO₄⁺"]
-VB = pd.DataFrame({'materials': cols, 'value': [-5.15,-4.661,-6.33,-8.8,-7.3,-5.5,-5.72,-5.254,-4.76,-5.91,-5.668,-4.9,-5.2,-6.8,-5.3, np.nan, np.nan, np.nan, np.nan, np.nan]}) #eV from ea + bg
-CB = pd.DataFrame({'materials': cols, 'value': [-0.39,-0.44,-1.34,-0.8,-0.34,-0.37,-0.06,0.46,-0.38,-0.79,-0.94,0.28,-0.84,-3.84,0.16, np.nan, np.nan, np.nan, np.nan, np.nan]}) #V (electron affinity)
-WF = pd.DataFrame({'materials': cats, 'value': [-5.47, -5.47, -5.10, -5.10, -4.64, 5.42, -5.64, -5.22, -5.22, -6.35, -4.71, -4.50, -4.42, -4.67, -4.55, -5.00, -3.63, -4.33, 4.5, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan]}) #eV
-#print(len(WF))
-OP = pd.DataFrame({'materials': cats, 'value': [1.692, 1.498, 0.521, 0.349, 0.8, 1.16, -0.257, 0.95,  0.84, 1.188, 0.951, -1.662, 0.455, -0.28, -0.447, -0.7618, -1.63, -0.913, 0.457, 0.3, 1.1, 0.9,  -0.532, 1.3, 0.801]}) #V
-#print(len(OP))
-OxP = pd.DataFrame({'materials': oxs, 'value':[1.763, 1.51, 1.36, 0.9, 2.123]}) #from Parsian band chart email
+VB = data[data['type'] == 'VB'].drop(columns='type').reset_index(drop=True)
+CB = data[data['type'] == 'CB'].drop(columns='type').reset_index(drop=True)
+WF = data[data['type'] == 'WF'].drop(columns='type').reset_index(drop=True)
+OP = data[data['type'] == 'OP'].drop(columns='type').reset_index(drop=True)
+OxP = data[data['type'] == 'OxP'].drop(columns='type').reset_index(drop=True)
+
+matls = data[data['type'] == 'matls']['materials'].dropna().tolist()
+cats = data[data['type'] == 'cats']['materials'].dropna().tolist()
+oxs = data[data['type'] == 'oxs']['materials'].dropna().tolist()
 
 eV_bot = -9 #VB bottom
 V_bot = -(eV_bot + 4.44)
@@ -200,10 +196,13 @@ def add_dropdown2():
 
     op_var = tk.BooleanVar()
     wf_var = tk.BooleanVar()
-    op_check = tk.Checkbutton(checkbox_frame, text="OP", variable=op_var)
-    wf_check = tk.Checkbutton(checkbox_frame, text="WF", variable=wf_var)
+    op_check = tk.Checkbutton(checkbox_frame, text="Ox. Pot.", variable=op_var)
+    wf_check = tk.Checkbutton(checkbox_frame, text="Work Func.", variable=wf_var)
+    lbl_mtl = tk.Label(checkbox_frame, text ="Choose one or both: ")
+    lbl_mtl.pack(side='left')
     op_check.pack(side='left')
     wf_check.pack(side='left')
+    
     metal_op_checks.append(op_var)
     metal_wf_checks.append(wf_var)
 
@@ -403,6 +402,12 @@ def plot_selected_materials():
 
 plot_button = tk.Button(root, text="Plot", command=plot_selected_materials)
 plot_button.pack(pady=10)
+
+
+note_frame = tk.Frame(root)
+note = tk.Label(note_frame, text="Note: Scroll to bottom of dropdown menu to add a custom material")
+note.pack(pady=5)
+note_frame.pack(pady=10, fill = 'x', expand = True)
 
 root.mainloop()
 
